@@ -34,7 +34,7 @@ public class Persona implements Runnable {
                     if (salon.esperarTurno()) { //Espera a que se llene el cupo, sino se cancela el turno
                         noSeCancelo = true;
                         int act1, act2;
-                        act1 = elegirPrimeraActividad();
+                        act1 = elegirPrimeraActividad(); //Elije una actividad al azar
                         boolean eligio = false;
                         //ACTIVIDAD 1
                         do {
@@ -74,7 +74,7 @@ public class Persona implements Runnable {
                                         salon.salirYoga();
                                     } else {
                                         System.out.println(DARK_BLUE + nombre + " no pudo entrar a Yoga" + RESET);
-                                        act1 = 0; //como no pudo entrar a la actividad, prueba con la siguiente, que seria Acro
+                                        act1 = 0; //como no pudo entrar a la actividad, prueba con la siguiente, que seria Acro (0)
                                     }
                                     break;
                                 default:
@@ -84,7 +84,7 @@ public class Persona implements Runnable {
                         } while (!eligio);
 
                         //ACTIVIDAD 2 - Prueba con las dos actividades restantes y sino vuelve a la primera
-                        //Ojala no sea dificil de entender la formula de los casos alternativos, pero
+                        //Ojala se entendienda la formula de los casos alternativos, pero
                         // asegura que se prueben las dos actividades restantes antes de repetir.
 
                         eligio = false;
@@ -103,7 +103,7 @@ public class Persona implements Runnable {
                                         System.out.println(DARK_PURPLE + nombre + " no pudo entrar a Telas" + RESET);
                                         act2++; //como no pudo entrar a la actividad, se le suma 1 para que pruebe en la siguiente
 
-                                        if (act2 == act1) {
+                                        if (act2 == act1) { //si ya hizo la actividad 1, suma 1 y prueba en la 2
                                             act1 = 0;
                                             act2++;
                                         }
@@ -121,7 +121,7 @@ public class Persona implements Runnable {
                                         System.out.println(DARK_GREEN + nombre + " no pudo entrar a Lyra" + RESET);
                                         act2++; //como no pudo entrar a la actividad, se le suma 1 para que pruebe en la siguiente
 
-                                        if (act2 == act1) {
+                                        if (act2 == act1) { //si ya hizo la actividad 2, vuelve y prueba la 0
                                             act1 = 1;
                                             act2 = 0;
                                         }
@@ -138,7 +138,7 @@ public class Persona implements Runnable {
                                         System.out.println(DARK_BLUE + nombre + " no pudo entrar a Yoga" + RESET);
                                         act2 = 0; //como no pudo entrar a la actividad, se le suma 1 para que pruebe en la siguiente
 
-                                        if (act2 == act1) {
+                                        if (act2 == act1) { //si ya hizo la 0, prueba con la 1
                                             act1 = 2;
                                             act2++;
                                         }
@@ -150,7 +150,7 @@ public class Persona implements Runnable {
                             }
                         } while (!eligio);
 
-                        salon.salir();
+                        salon.salir(); //metodo para vaciar el contador de personas de la sala
                     } else {
                         System.out.println(RED + nombre + " tuvo su turno cancelado en su intento N°" + (i + 1) + RESET);
                         i++;
@@ -162,9 +162,9 @@ public class Persona implements Runnable {
                     Thread.sleep(23000 + rand.nextInt(10000));
                 } else { //Resguardo en caso de que alguien entre cuando no hay más turnos.
                     System.out.println(RED + nombre + " no pudo entrar a ningun turno" + RESET);
-                    i = cantTurnos;
+                    i = cantTurnos; //ya se que no es bonito cortar asi, pero para no poner otro booleano
                 }
-            } while (!noSeCancelo && i < cantTurnos);
+            } while (!noSeCancelo && i < cantTurnos); //corta si logro entrar en un turno o si ya no quedan más turnos para probar
 
             System.out.println(nombre + " se retira del salon");
 
