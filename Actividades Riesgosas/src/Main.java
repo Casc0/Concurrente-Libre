@@ -1,8 +1,8 @@
 public class Main{
 
     public static void main(String[] args) {
-        int cantPersonas = 142, turnos = 10;
-        Salon salon = new Salon(4);
+        int cantPersonas = 142, turnos = 10, cantCuposActividad = 4;
+        Salon salon = new Salon(cantCuposActividad);
         Thread[] personas = new Thread[cantPersonas];
         crearHilos(personas, salon, turnos);
 
