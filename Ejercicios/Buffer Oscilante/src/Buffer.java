@@ -61,8 +61,8 @@ public class Buffer {
             System.out.println(GREEN + nombre + " ha insertado el elemento " + elem + RESET);
 
             oscilacion.acquire();
-            if (vacio) {
-                //si ambos colas estan vacias entonces debe oscilar, por pauta 4
+            if (vacio) { //si ambos colas estan vacias entonces debe oscilar, por pauta 4
+
                 vacio = false; // deja de estar vacio
                 oscilacion.release();
                 System.out.println("La inserción oscila");
@@ -94,11 +94,10 @@ public class Buffer {
             //Se oscila cuando la cola de extraccion esta vacia
             if (colaExtraccion.isEmpty()) {
 
-                mutexInsercion.acquire();
+                mutexInsercion.acquire(); //evita que se inserte mientras oscila
 
-                //verifica si la cola de insercion esta vacia, en cuyo caso espera a que se inserte un elemento
 
-                if (colaInsercion.isEmpty()) {
+                if (colaInsercion.isEmpty()) {  //verifica si la cola de insercion esta vacia, en cuyo caso espera a que se inserte un elemento
                     oscilacion.acquire();
                     vacio = true;
                     oscilacion.release();
@@ -106,7 +105,7 @@ public class Buffer {
                     System.out.println("Extraccion espera inserción");
 
                     mutexInsercion.release();
-                    esperandoInsercion.acquire();
+                    esperandoInsercion.acquire(); // espera a que se inserte un elemento
 
                 } else {//oscila porque la cola de insercion tiene elementos, para asi asegurar la pauta 7
 
@@ -130,13 +129,17 @@ public class Buffer {
 
 
     private void oscilar() {
-        estadoBuffer("antes de oscilar");
+        estadoBuffer("antes de oscilar"); //Imprime el estado de las colas antes de oscilar
+
+        //Intercambia las colas
         Queue auxiliar = colaInsercion;
         colaInsercion = colaExtraccion;
         colaExtraccion = auxiliar;
-        estadoBuffer("despues de oscilar");
+
+        estadoBuffer("despues de oscilar"); //Imprime el estado de las colas despues de oscilar
     }
 
+    //Imprime el estado de las colas
     private void estadoBuffer(String mensaje) {
         System.out.println(YELLOW + "Colas " + mensaje + ": ");
         System.out.println("\t Cola de insercion: " + colaInsercion.toString());
