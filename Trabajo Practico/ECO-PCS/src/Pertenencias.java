@@ -1,6 +1,3 @@
-package CarreraGomones;
-
-import java.util.HashMap;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class Pertenencias {
