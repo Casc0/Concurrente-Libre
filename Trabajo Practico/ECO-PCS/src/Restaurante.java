@@ -1,3 +1,4 @@
+import java.util.LinkedList;
 import java.util.Queue;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
@@ -11,6 +12,7 @@ public class Restaurante {
     public Restaurante(int mesas) {
         turnoActual = 0;
         mesasLibre = mesas;
+        colaEntrada = new LinkedList<Integer>();
     }
 
     public void entrar() {
