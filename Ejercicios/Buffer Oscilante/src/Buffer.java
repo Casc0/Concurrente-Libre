@@ -28,9 +28,6 @@ public class Buffer {
     private Semaphore mutexInsercion = new Semaphore(1);
     private Semaphore mutexExtraccion = new Semaphore(1);
 
-    //Semaforos para la oscilacion
-    private Semaphore oscilacion = new Semaphore(1);
-
     //Semaforo para la espera de insercion
     private Semaphore esperandoInsercion = new Semaphore(0);
 
@@ -61,11 +58,11 @@ public class Buffer {
 
             System.out.println(GREEN + nombre + " ha insertado el elemento " + elem + RESET);
 
-            oscilacion.acquire();
+
             if (vacio) { //si ambos colas estan vacias entonces debe oscilar, por pauta 4
 
                 vacio = false; // deja de estar vacio
-                oscilacion.release();
+
                 System.out.println("La inserción oscila");
                 oscilar();
                 if(esperando > 0){
@@ -74,8 +71,6 @@ public class Buffer {
 
                 //desbloquea a la extraccion
 
-            }else{
-                oscilacion.release();
             }
 
             mutexInsercion.release();
@@ -102,9 +97,7 @@ public class Buffer {
 
 
                 if (colaInsercion.isEmpty()) {  //verifica si la cola de insercion esta vacia, en cuyo caso espera a que se inserte un elemento
-                    oscilacion.acquire();
                     vacio = true;
-                    oscilacion.release();
 
                     System.out.println("Extraccion espera inserción");
 
