@@ -6,11 +6,6 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class Restaurante {
 
-    private Semaphore mutexVeganas = new Semaphore(1);
-    private Semaphore mutexNapolitanas = new Semaphore(1);
-    private Semaphore mutexMostradorNapo = new Semaphore(1);
-    private Semaphore mutexMostradorVeg = new Semaphore(1);
-
     private int MAX_PEDIDOS;
 
     private ReentrantLock lockPedidos = new ReentrantLock();
@@ -47,9 +42,7 @@ public class Restaurante {
                 pizzerosNapos.await();
             }
 
-            mutexNapolitanas.acquire(); //mutex para proteger la variable
             naposPorHacer--;
-            mutexNapolitanas.release();
 
         } catch (InterruptedException e) {
             System.out.println("Error de interrupcion");
@@ -61,19 +54,14 @@ public class Restaurante {
     }
 
     public void terminarPizzaNapolitana() {
-        try {
+
             lockNapolitanas.lock();
 
-            mutexMostradorNapo.acquire(); //mutex para proteger la variable
             mostradorNapos++;
             deliveryNapos.signal(); //avisa que hay una pizza lista
-            mutexMostradorNapo.release();
 
-        } catch (InterruptedException e) {
-            System.out.println("Error de interrupcion");
-        }finally{
+
             lockNapolitanas.unlock();
-        }
 
     }
 
@@ -84,9 +72,7 @@ public class Restaurante {
                 deliveryNapos.await();
             }
 
-            mutexMostradorNapo.acquire(); //mutex para proteger la variable
             mostradorNapos--;
-            mutexMostradorNapo.release();
 
         } catch (InterruptedException e) {
             System.out.println("Error de interrupcion");
@@ -108,9 +94,7 @@ public class Restaurante {
                 pizzerosVeg.await();
             }
 
-            mutexVeganas.acquire(); //mutex para proteger la variable
             vegPorHacer--;
-            mutexVeganas.release();
 
         } catch (InterruptedException e) {
             System.out.println("Error de interrupcion");
@@ -121,20 +105,16 @@ public class Restaurante {
     }
 
     public void terminarPizzaVegana() {
-        try {
+
             lockVeganas.lock();
 
-            mutexMostradorVeg.acquire(); //mutex para proteger la variable
             mostradorVeg++;
             deliveryVeg.signal(); //avisa que hay una pizza lista
 
-            mutexMostradorVeg.release();
 
-        } catch (InterruptedException e) {
-            System.out.println("Error de interrupcion");
-        }finally{
+
             lockVeganas.unlock();
-        }
+
     }
 
     public void entregarVegana() {
@@ -144,9 +124,7 @@ public class Restaurante {
                 deliveryVeg.await();
             }
 
-            mutexMostradorVeg.acquire(); //mutex para proteger la variable
             mostradorVeg -= 2;
-            mutexMostradorVeg.release();
 
         } catch (InterruptedException e) {
             System.out.println("Error de interrupcion");
@@ -180,11 +158,9 @@ public class Restaurante {
 
             if (pedido.getTipoPizza()) { //true es vegana, false es napo
 
-                mutexVeganas.acquire(); //para proteger la variable
-                vegPorHacer = vegPorHacer + 2;
-                mutexVeganas.release();
 
                 lockVeganas.lock(); //Para poder avisar a los pizzeros
+                vegPorHacer = vegPorHacer + 2;
                 pizzerosVeg.signalAll();
                 lockVeganas.unlock();
 
@@ -192,11 +168,8 @@ public class Restaurante {
 
             } else {
 
-                mutexNapolitanas.acquire(); //para proteger la variable
-                naposPorHacer++;
-                mutexNapolitanas.release();
-
                 lockNapolitanas.lock(); //Para poder avisar a los pizzeros
+                naposPorHacer++;
                 pizzerosNapos.signal();
                 lockNapolitanas.unlock();
 
@@ -222,7 +195,6 @@ public class Restaurante {
         } catch (InterruptedException e) {
             System.out.println("Error de interrupcion");
         }finally{
-
             Pedido pedido = colaPedidos.remove(); //Lo agarra
             lockPedidos.unlock();
 
@@ -239,36 +211,32 @@ public class Restaurante {
             if (!pizza) {
                 lockNapolitanas.lock();
 
-                mutexNapolitanas.acquire();
+
                 naposPorHacer++;
                 pizzerosNapos.signal(); //avisa que tienen que hacer una nueva
-                mutexNapolitanas.release();
 
+
+                mostradorNapos--;
                 while (mostradorNapos <= 0) { //espera a que haya alguna hecha
                     deliveryNapos.await();
                 }
 
-                mutexMostradorNapo.acquire(); //se come una pizza
-                mostradorNapos--;
-                mutexMostradorNapo.release();
+
 
                 lockNapolitanas.unlock();
             } else {
                 lockVeganas.lock();
 
-                mutexVeganas.acquire();
+
                 vegPorHacer++;
                 pizzerosVeg.signal(); //avisa que tienen que hacer una nueva
-                mutexVeganas.release();
 
                 while (mostradorVeg <= 0) { //espera a que haya alguna hecha
                     deliveryVeg.await();
                 }
 
-                mutexMostradorVeg.acquire(); //se come una pizza
-                mostradorVeg--;
-                mutexMostradorVeg.release();
 
+                mostradorVeg--;
                 lockVeganas.unlock();
             }
         } catch (InterruptedException e) {

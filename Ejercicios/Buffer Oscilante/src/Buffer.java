@@ -22,6 +22,7 @@ public class Buffer {
     7. Hay que asegurar la politica de First In First Out (FIFO) en la extracción de datos
 
     */
+    private int esperando = 0;
 
     //Semaforos de exclusion mutua
     private Semaphore mutexInsercion = new Semaphore(1);
@@ -67,7 +68,10 @@ public class Buffer {
                 oscilacion.release();
                 System.out.println("La inserción oscila");
                 oscilar();
-                esperandoInsercion.release();
+                if(esperando > 0){
+                    esperandoInsercion.release(esperando);
+                }
+
                 //desbloquea a la extraccion
 
             }else{
@@ -104,8 +108,10 @@ public class Buffer {
 
                     System.out.println("Extraccion espera inserción");
 
+                    esperando++;
                     mutexInsercion.release();
                     esperandoInsercion.acquire(); // espera a que se inserte un elemento
+                    esperando--;
 
                 } else {//oscila porque la cola de insercion tiene elementos, para asi asegurar la pauta 7
 

@@ -1,7 +1,7 @@
 public class Main {
     public static void main(String[] args) {
     Buffer b = new Buffer();
-    int cantInsertores = 17, cantExtractores = 16;
+    int cantInsertores = 5, cantExtractores = 16;
     Thread[] insertores = new Thread[cantInsertores];
     Thread[] extractores = new Thread[cantExtractores];
     crearHilos(b, insertores, extractores);

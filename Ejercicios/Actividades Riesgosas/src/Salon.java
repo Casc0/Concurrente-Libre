@@ -18,6 +18,8 @@ public class Salon {
     private boolean cancelado = false;
     private boolean habilitado = true;
 
+    int puestoActual = 0;
+
 
     private int capActualTelas, capActualLyra, capActualYoga, cupoMaxActividad, cupoMaxSalon, cupoActualSalon;
 
@@ -37,6 +39,15 @@ public class Salon {
     //Metodo para ver si la persona llega a entrar en el cupo, si no llega, o si no hay mas turnos.
     public synchronized int llegarASalon() {
         int entroEnTurno = 0;
+
+        int miPuesto = puestoActual;
+        puestoActual++;
+        cola.put(miPuesto);
+        while(cupoActualSalon >= cupoMaxSalon && cola.peek() != miPuesto && terminaronTurnos){
+            wait();
+        }
+        cola.remove();
+        notifyAll();
 
         if(terminaronTurnos){
             entroEnTurno = -1;
