@@ -16,7 +16,7 @@ public class FaroMirador {
     private Condition esperandoEleccion = lockTobogan.newCondition();
 
     private int turnoEscalera, turnoTobogan;
-    private Queue<Integer> colaEscalera, colaTobogan;
+    private Queue<Integer> colaAfuera, colaEscalera, colaTobogan;
     private boolean tobogan1Disponible, tobogan2Disponible, alguienEsperando;
 
     private Exchanger<Integer> eleccionTobogan;
@@ -31,7 +31,7 @@ public class FaroMirador {
         this.personasSubiendo = 0;
         turnoEscalera = 0;
         turnoTobogan = 0;
-        colaEscalera = new LinkedList<>();
+        colaAfuera = new LinkedList<>();
         colaTobogan = new LinkedList<>();
         tobogan1Disponible = true;
         tobogan2Disponible = true;
@@ -45,11 +45,12 @@ public class FaroMirador {
         boolean subio;
 
         lockEscalera.lock();
+
         int turno = turnoEscalera; //se asigna el turno a la persona
         turnoEscalera++; //se actualiza el turno
-        colaEscalera.add(turno); //se agrega a la cola
+        colaAfuera.add(turno); //se agrega a la cola
 
-        while (reloj.dentroHorario() && personasSubiendo >= capacidadEscalera && colaEscalera.peek() != turno ) {
+        while (reloj.dentroHorario() && personasSubiendo >= capacidadEscalera && colaAfuera.peek() != turno ) {
             //mientas la escalera este llena y no sea su turno, solo avanza cuando hay espacio y es el siguiente
             try {
                 escalera.await();
@@ -59,11 +60,12 @@ public class FaroMirador {
         }
         if(!reloj.dentroHorario()){ //si no esta dentro del horario, nadie más puede subir
             subio = false;
-            colaEscalera.clear(); //se vacia la cola para que nadie mas pueda subir
-            escalera.signalAll(); //se avisa a todos los que estan esperando que no pueden subir
+            colaAfuera.clear(); //se vacia la cola para que nadie mas pueda subir
+            escalera.signal(); //se avisa a todos los que estan esperando que no pueden subir
         }else{
             subio = true;
-            colaEscalera.poll(); //se saca de la cola
+            colaAfuera.poll(); //se saca de la cola
+            colaEscalera.add(turno);
             personasSubiendo++; //se suma una persona a las que estan subiendo
 
         }
@@ -75,6 +77,8 @@ public class FaroMirador {
     public void llegarCima() {
         //Metodo de Persona - Se encarga de liberar su lugar en la escalera
 
+        //ACA WHILE
+
         lockEscalera.lock();
         personasSubiendo--;
         escalera.signalAll();
@@ -85,20 +89,16 @@ public class FaroMirador {
         //Metodo de Persona - Se encarga de hacer la cola para tirarse en el tobogan
 
         lockTobogan.lock();
-        int turno = turnoTobogan; //se asigna el turno a la persona
-        turnoTobogan++; //se actualiza el turno
-        colaTobogan.add(turno); //se agrega a la cola
 
-
-
-        while (!(tobogan1Disponible || tobogan2Disponible) && (colaTobogan.peek() != turno)) { //mientras no sea su turno y no haya toboganes disponibles
+        while (!(tobogan1Disponible || tobogan2Disponible)) { //mientras no sea su turno y no haya toboganes disponibles
             try {
                 tobogan.await();
             } catch (InterruptedException e) {
                 System.out.println("Error en tirarse tobogan");
             }
         }
-        colaTobogan.poll(); //se saca de la cola
+
+        colaEscalera.poll();
 
         //Separado para facilitar la lectura
         return conseguirTobogan(); //devuelve el tobogan asignado

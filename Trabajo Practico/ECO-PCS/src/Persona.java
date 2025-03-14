@@ -53,12 +53,12 @@ public class Persona implements Runnable {
     @Override
     public void run() {
 
-        /*
+
         if (rand.nextInt() % 3 == 0) { // 1/3 de probabilidad de que la persona llegue en colectivo
             colectivo(colectivos[rand.nextInt(colectivos.length)]); // elige un colectivo al azar
 
         }
-        */
+
 
         if (!reloj.dentroHorario()) { //Revisa que se este entre las 9 hs y las 17 hs
             System.out.println(nombre + " no puede entrar al Parque porque está cerrado.");
@@ -68,15 +68,14 @@ public class Persona implements Runnable {
             boolean seguir = entrar(); //La persona entra al parque pasando por los molinetes y recibiendo su pulsera
 
 
-            irCarrera();
 
 
-            /*
 
             while (reloj.dentroHorario() && seguir) { //Mientras este dentro del horario y quiera seguir en el parque
 
 
                 elegirActividad(); //Elige una actividad al azar
+
                 if(yaCompro && yaAlmorzo && yaMerendo && yaSubioFaro && yaHizoSnorkel && yaNadoDelfines && yaHizoCarrera){ //Si ya hizo todas las actividades se va
                     seguir = false;
                 }else{
@@ -84,7 +83,7 @@ public class Persona implements Runnable {
                 }
 
             }
-            */
+
         }
 
     }
@@ -93,6 +92,8 @@ public class Persona implements Runnable {
         switch (rand.nextInt(6)) { //Elige una actividad al azar, nunca repite la misma actividad excepto restaurante
 
             //CARRERA
+
+                //CARRERA
             case 0:
                 if (!yaHizoCarrera) {
                     irCarrera();
@@ -243,7 +244,7 @@ public class Persona implements Runnable {
             int tobogan = faro.esperarTobogan();
             System.out.println(nombre + " esta bajando en el tobogan n°" + tobogan + ".");
             try {
-                Thread.sleep(500);
+                Thread.sleep(rand.nextInt(500, 1000));
             } catch (InterruptedException e) {
                 System.out.println("Error en la espera de la bajada del tobogan");
             }

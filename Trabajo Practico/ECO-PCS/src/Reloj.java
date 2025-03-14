@@ -41,7 +41,7 @@ public class Reloj {
     }
 
     public synchronized void esperarQuinceMinutos() {
-        // espera a que pasen 30 minutos, si el parque esta cerrado espera a que abra
+        // espera a que pasen 15 minutos, si el parque esta cerrado espera a que abra
 
         while (!parqueAbierto) {
             try {
@@ -50,6 +50,7 @@ public class Reloj {
                 System.out.println("Problema en el Reloj");
             }
         }
+
         try {
             wait();
         } catch (InterruptedException ie) {

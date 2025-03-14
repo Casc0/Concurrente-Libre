@@ -18,14 +18,16 @@ public class lagunaSnorkel {
 
     public void conseguirEquipo() {
         try {
-            atencionAsistente.acquire();
+            //atencionAsistente.acquire();
+
             // Intenta conseguir un snorkel
             snorkels.acquire();
             // Intenta conseguir un salvavidas
             salvavidas.acquire();
             // Intenta conseguir patas de rana
             patasRanas.acquire();
-            atencionAsistente.release();
+
+            //atencionAsistente.release();
 
         } catch (InterruptedException e) {
             System.out.println("Error en la espera de conseguir equipo de snorkel");

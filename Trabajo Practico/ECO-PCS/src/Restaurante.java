@@ -31,8 +31,6 @@ public class Restaurante {
 
             mesasLibre--;
 
-
-
         } catch (InterruptedException e) {
             System.out.println("Error en la espera de la fila del restaurante");
         } finally {

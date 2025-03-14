@@ -24,6 +24,6 @@ public class Shop {
         // La persona termina de comprar y se va, liberando la caja
 
         cantCajasOcupadas--;
-        notifyAll();
+        notify();
     }
 }

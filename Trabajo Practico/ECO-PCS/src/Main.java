@@ -68,7 +68,7 @@ public class Main {
         Carrera carrera = new Carrera(cantGomonesIndividuales, cantGomonesDupla, minimo);
 
         int lugarTren = minimo + 10;
-        TrenInterno tren = new TrenInterno(15, reloj);
+        TrenInterno tren = new TrenInterno(lugarTren, reloj);
 
         ConductorTren conductorDelTren = new ConductorTren(tren, reloj);
 
