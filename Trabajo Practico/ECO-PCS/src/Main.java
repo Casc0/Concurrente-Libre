@@ -32,22 +32,22 @@ public class Main {
         Random rand = new Random();
         generarNombres();
 
+        // RELOJ
+        int horaInicio = 9, tiempo15Minutos = 1000, apertura = 9, cierre = 17;
+        reloj = new Reloj(horaInicio, apertura , cierre);
+        incTiempo = new IncrementadorTiempo(reloj, tiempo15Minutos);
+
         // ENTRADA
         int cantMolinetes = 3;
-        entrada = new Entrada(cantMolinetes);
+        entrada = new Entrada(cantMolinetes, reloj);
 
         // SHOP
         int cantCajas = 2;
         tienda = new Shop(cantCajas);
 
-        // RELOJ
-        int horaInicio = 9;
-        reloj = new Reloj(horaInicio);
-        incTiempo = new IncrementadorTiempo(reloj);
-
         // FARO
         int cantToboganes = 2, capacidadEscalera = 6;
-        faro = new FaroMirador(cantToboganes, capacidadEscalera);
+        faro = new FaroMirador(cantToboganes, capacidadEscalera, reloj);
         administrador = new AdministradorTobogan(faro);
 
         // SNORKEL
@@ -58,9 +58,29 @@ public class Main {
         // RESTAURANTES
         int cantRestaurantes = 3;
         restaurantes = new Restaurante[cantRestaurantes];
-        for (int i = 0; i < cantCajas; i++) {
+        for (int i = 0; i < cantRestaurantes; i++) {
             restaurantes[i] = new Restaurante(rand.nextInt(5,10));
         }
+
+        //GOMONES
+
+        int cantGomonesIndividuales = 10, cantGomonesDupla = 5, minimo = 12;
+        Carrera carrera = new Carrera(cantGomonesIndividuales, cantGomonesDupla, minimo);
+
+        int lugarTren = minimo + 10;
+        TrenInterno tren = new TrenInterno(15, reloj);
+
+        ConductorTren conductorDelTren = new ConductorTren(tren, reloj);
+
+        int cantBicis = minimo + 2;
+        standBicis bicis = new standBicis(cantBicis, reloj);
+
+        int cantBolsos = minimo + 5, capacidadCamio = minimo;
+        standPertenencias standP = new standPertenencias(20);
+
+        Camioneta camioneta = new Camioneta(capacidadCamio, standP);
+
+        //DELFINES
 
         // COLECTIVOS
         int cantColectivos = 3;
@@ -73,17 +93,17 @@ public class Main {
         }
 
         // PERSONAS
-        int cantPersonasIniciales = 100;
+        int cantPersonasIniciales = 15;
         personas = new Persona[cantPersonasIniciales];
         for (int i = 0; i < cantPersonasIniciales; i++) {
-            personas[i] = new Persona(nombres[rand.nextInt(200)], entrada, reloj, colectivos, tienda, restaurantes, faro, snorkel);
+            personas[i] = new Persona(nombres[rand.nextInt(200)], entrada, reloj, colectivos, tienda, restaurantes, faro, snorkel, standP, tren, carrera, bicis);
         }
 
         // GENERADORES DE PERSONAS
-        int cantGeneradores = 15;
+        int cantGeneradores = 1;
         generadores = new generadorPersonas[cantGeneradores];
         for (int i = 0; i < cantGeneradores; i++) {
-            generadores[i] = new generadorPersonas(nombres, colectivos, entrada, tienda, reloj, faro, snorkel, restaurantes);
+            generadores[i] = new generadorPersonas(nombres, colectivos, entrada, tienda, reloj, faro, snorkel, restaurantes, standP, tren, carrera, bicis);
         }
 
         //HILOS
@@ -91,12 +111,15 @@ public class Main {
         Thread[] hilosColectiveros = new Thread[colectiveros.length];
         Thread[] hilosGeneradores = new Thread[generadores.length];
         Thread hiloTiempo = new Thread(incTiempo);
+        Thread hiloAdmin = new Thread(administrador);
+        Thread hiloConductor = new Thread(conductorDelTren);
+        Thread hiloCamioneta = new Thread(camioneta);
 
         //CREACION DE HILOS
         crearHilos(hilosPersonas, hilosColectiveros, hilosGeneradores);
 
         //INICIO DE HILOS
-        iniciarHilos(hilosPersonas, hilosColectiveros, hiloTiempo, hilosGeneradores);
+        iniciarHilos(hilosPersonas, hilosColectiveros, hiloTiempo, hilosGeneradores, hiloAdmin, hiloConductor, hiloCamioneta);
     }
 
 
@@ -115,7 +138,12 @@ public class Main {
 
     }
 
-    public static void iniciarHilos(Thread[] hilosPersonas, Thread[] hilosColectiveros, Thread hiloTiempo, Thread[] hilosGeneradores) {
+    public static void iniciarHilos(Thread[] hilosPersonas, Thread[] hilosColectiveros, Thread hiloTiempo, Thread[] hilosGeneradores, Thread hiloAdmin, Thread hiloConductor, Thread hiloCamioneta) {
+
+            hiloAdmin.start();
+            hiloConductor.start();
+            hiloCamioneta.start();
+            hiloTiempo.start();
 
             for (int i = 0; i < hilosPersonas.length; i++) {
                 hilosPersonas[i].start();
@@ -123,7 +151,7 @@ public class Main {
             for (int i = 0; i < hilosColectiveros.length; i++) {
                 hilosColectiveros[i].start();
             }
-            hiloTiempo.start();
+
 
             for (int i = 0; i < hilosGeneradores.length; i++) {
                 hilosGeneradores[i].start();

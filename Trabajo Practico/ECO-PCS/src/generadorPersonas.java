@@ -9,8 +9,12 @@ public class generadorPersonas implements Runnable{
     private FaroMirador faro;
     private lagunaSnorkel snorkel;
     private Restaurante[] restaurantes;
+    private standPertenencias standDePertenencias;
+    private TrenInterno trenInterno;
+    private Carrera carreraGomones;
+    private standBicis standDeBicis;
 
-    public generadorPersonas(String[] nombres, Colectivo[] colectivos, Entrada entrada, Shop tienda, Reloj reloj, FaroMirador faro, lagunaSnorkel snorkel, Restaurante[] restaurantes) {
+    public generadorPersonas(String[] nombres, Colectivo[] colectivos, Entrada entrada, Shop tienda, Reloj reloj, FaroMirador faro, lagunaSnorkel snorkel, Restaurante[] restaurantes, standPertenencias standP, TrenInterno tren, Carrera carrera, standBicis standB) {
         this.nombres = nombres;
         this.entrada = entrada;
         this.reloj = reloj;
@@ -19,6 +23,10 @@ public class generadorPersonas implements Runnable{
         this.restaurantes = restaurantes;
         this.faro = faro;
         this.snorkel = snorkel;
+        this.standDePertenencias = standP;
+        this.standDeBicis = standB;
+        this.trenInterno = tren;
+        this.carreraGomones = carrera;
     }
 
     @Override
@@ -34,7 +42,7 @@ public class generadorPersonas implements Runnable{
             }else{
                 try {
 
-                    Thread persona = new Thread( new Persona(nombres[rand.nextInt(200)], entrada, reloj, colectivos, tienda, restaurantes, faro, snorkel));
+                    Thread persona = new Thread( new Persona(nombres[rand.nextInt(200)], entrada, reloj, colectivos, tienda, restaurantes, faro, snorkel, standDePertenencias, trenInterno, carreraGomones, standDeBicis));
                     persona.start();
                     Thread.sleep(rand.nextInt(2000, 4000));
                 } catch (InterruptedException e) {

@@ -1,8 +1,8 @@
 import java.util.concurrent.Semaphore;
 
 public class lagunaSnorkel {
-    int cantSnorkel, cantSalvavidas, cantPatasRana;
-    Semaphore atencionAsistente, snorkels, salvavidas, patasRanas;
+    private int cantSnorkel, cantSalvavidas, cantPatasRana;
+    private Semaphore atencionAsistente, snorkels, salvavidas, patasRanas;
 
 
     public lagunaSnorkel(int snorkel, int salvavida, int patasRana, int asistentes) {

@@ -51,7 +51,6 @@ public class Colectivo {
         // Metodo del Colectivero - Cuando llega al parque, avisa a las personas que se bajen. Luego espera a que se bajen todos y reinicia las variables.
 
         lockColectivo.lock();
-        System.out.println("LLEGOOOOOOOOOOOO" + id);
 
         llego = true;   //Avisa a las personas que llego asi se empiezan a bajar
         viajando.signalAll();
@@ -63,7 +62,7 @@ public class Colectivo {
                 System.out.println("Problema en el Colectivo");
             }
         }
-        System.out.println("REINICIOOOOOOOOOOOOOOOOOOOO");
+
         //Reinicia las variables
 
 
@@ -75,7 +74,7 @@ public class Colectivo {
     }
 
 
-    public synchronized void subirse() {
+    public void subirse() {
         //Metodo de Persona - Mientras haya espacio en el colectivo, se sube
         lockColectivo.lock();
 
@@ -97,7 +96,7 @@ public class Colectivo {
         lockColectivo.unlock();
     }
 
-    public synchronized void bajarse() {
+    public void bajarse() {
         //Metodo de Persona - Mientras no haya llegado, espera. Cuando llega, se baja. Si es el ultimo avisa que se vacio.
         lockColectivo.lock();
 
@@ -109,11 +108,12 @@ public class Colectivo {
             }
         }
 
-        System.out.println("Se bajo una persona del colectivo " + id);
+
         capacidadDisponible++;
 
         if (capacidadDisponible >= capacidadMaxima) { //Si es el ultimo avisa que se vacio
             bajaronTodos = true;
+            //System.out.println("Se bajaron todos del colectivo " + id + ". Quedan " + capacidadDisponible + " lugares disponibles de " + capacidadMaxima);
             condicionColectivero.signal();
         }
         lockColectivo.unlock();

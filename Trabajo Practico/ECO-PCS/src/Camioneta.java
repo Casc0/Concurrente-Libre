@@ -1,9 +1,10 @@
 public class Camioneta implements Runnable {
-    private int[] caja;
+    private Object[] caja;
     private standPertenencias stand;
 
+
     public Camioneta(int cap, standPertenencias stand) {
-        caja = new int[cap];
+        caja = new Object[cap];
         this.stand = stand;
     }
 

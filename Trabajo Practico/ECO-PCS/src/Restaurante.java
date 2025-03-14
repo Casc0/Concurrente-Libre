@@ -4,10 +4,10 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class Restaurante {
-    Queue<Integer> colaEntrada;
-    ReentrantLock lockEntrada = new ReentrantLock(true);
-    Condition fila = lockEntrada.newCondition();
-    int turnoActual, mesasLibre;
+    private Queue<Integer> colaEntrada;
+    private ReentrantLock lockEntrada = new ReentrantLock(true);
+    private Condition fila = lockEntrada.newCondition();
+    private int turnoActual, mesasLibre;
 
     public Restaurante(int mesas) {
         turnoActual = 0;

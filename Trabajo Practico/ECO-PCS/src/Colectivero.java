@@ -8,31 +8,23 @@ public class Colectivero implements Runnable {
 
     public Colectivero(Colectivo cole, Reloj rel) {
         colectivo = cole;
-        nombre = "Colectivero N°" + + colectivo.getID();
+        nombre = "Colectivero N°" + +colectivo.getID();
         reloj = rel;
     }
 
     @Override
     public void run() {
-        //Sale cada media hora, y si no esta abierto el parque espera.
+        //Sale cada 30 minutos y si no esta abierto el parque espera.
         while (true) {
-            if(!reloj.esperarMediaHora()){ //espera media hora si esta abierto el parque sino espera a que abra.
-                try{
-                    Thread.sleep(5000);
-                }catch(InterruptedException e){
-                    System.out.println(nombre + " interrumpido");
-                }
-            }else{ //si esta abierto el parque, sale
-                colectivo.salir();
-                System.out.println(RED + nombre + " salio" + RESET);
-                try{
-                    Thread.sleep(500); //viajando
-                }catch(InterruptedException e){
-                    System.out.println(nombre + " interrumpido");
-                }
-                System.out.println(RED + nombre + " llego al parque" + RESET);
-                colectivo.llegar();
-            }
+            reloj.esperarQuinceMinutos(); //espera quince minutos si esta abierto el parque sino espera a que abra.
+
+            colectivo.salir();
+            System.out.println(RED + nombre + " salio" + RESET);
+            reloj.viajarQuinceMinutos(); //espera 15 minutos para que llegue al parque
+            System.out.println(RED + nombre + " llego al parque" + RESET);
+            colectivo.llegar();
+            System.out.println(RED + nombre + " esta volviendo" + RESET);
+
 
         }
 
