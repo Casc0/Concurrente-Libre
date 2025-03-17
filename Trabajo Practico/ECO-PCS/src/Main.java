@@ -20,6 +20,7 @@ public class Main {
     private static standBicis bicis;
     private static standPertenencias standP;
     private static TrenInterno tren;
+    private static Piletas piletas;
 
     //RUNNABLES
     private static Persona[] personas;
@@ -31,6 +32,7 @@ public class Main {
     private static Camioneta camioneta;
     private static Gomon[] gomones;
     private static GestorGomon gestorGomon;
+    private static GestorPileta gestorPileta;
 
     //HILOS
     private static Thread[] hilosPersonas;
@@ -42,6 +44,7 @@ public class Main {
     private static Thread hiloConductor;
     private static Thread hiloCamioneta;
     private static Thread hiloGestorGomon;
+    private static Thread hiloGestorPileta;
 
     //MISC
     private static String[] nombres = new String[200];
@@ -65,6 +68,8 @@ public class Main {
         restaurante();
 
         carrera();
+
+        piletas();
 
         colectivo();
 
@@ -169,15 +174,22 @@ public class Main {
         int cantPersonasIniciales = 15;
         personas = new Persona[cantPersonasIniciales];
         for (int i = 0; i < cantPersonasIniciales; i++) {
-            personas[i] = new Persona(nombres[rand.nextInt(200)], entrada, reloj, colectivos, tienda, restaurantes, faro, snorkel, standP, tren, carrera, bicis);
+            personas[i] = new Persona(nombres[rand.nextInt(200)], entrada, reloj, colectivos, tienda, restaurantes, faro, snorkel, standP, tren, carrera, bicis, piletas);
         }
 
         // GENERADORES DE PERSONAS
-        int cantGeneradores = 1;
+        int cantGeneradores = 5;
         generadores = new generadorPersonas[cantGeneradores];
         for (int i = 0; i < cantGeneradores; i++) {
-            generadores[i] = new generadorPersonas(nombres, colectivos, entrada, tienda, reloj, faro, snorkel, restaurantes, standP, tren, carrera, bicis);
+            generadores[i] = new generadorPersonas(nombres, colectivos, entrada, tienda, reloj, faro, snorkel, restaurantes, standP, tren, carrera, bicis, piletas);
         }
+    }
+
+    private static void piletas(){
+        // PILETAS
+        int capacidadPileta = 5;
+        piletas = new Piletas(capacidadPileta);
+        gestorPileta = new GestorPileta(reloj, piletas);
     }
 
 
@@ -193,6 +205,7 @@ public class Main {
         hiloCamioneta = new Thread(camioneta);
         hiloGestorGomon = new Thread(gestorGomon);
         hilosGomones = new Thread[gomones.length];
+        hiloGestorPileta = new Thread(gestorPileta);
 
         for (int i = 0; i < personas.length; i++) {
             hilosPersonas[i] = new Thread(personas[i]);
@@ -218,6 +231,7 @@ public class Main {
         hiloCamioneta.start();
         hiloGestorGomon.start();
         hiloTiempo.start();
+        hiloGestorPileta.start();
 
         for (int i = 0; i < hilosPersonas.length; i++) {
             hilosPersonas[i].start();

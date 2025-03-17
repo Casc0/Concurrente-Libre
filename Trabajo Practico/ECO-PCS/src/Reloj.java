@@ -66,4 +66,17 @@ public class Reloj {
             System.out.println("Problema en el Reloj");
         }
     }
+
+    public synchronized void esperar45Minutos() {
+        // espera a que pasen 45 minutos
+
+        for(int i = 0; i < 3; i++){
+            try {
+                wait();
+            } catch (InterruptedException ie) {
+                System.out.println("Problema en el Reloj");
+            }
+        }
+
+    }
 }

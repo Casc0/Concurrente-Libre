@@ -13,19 +13,20 @@ public class Persona implements Runnable {
     private TrenInterno trenInterno;
     private Carrera carreraGomones;
     private standBicis standDeBicis;
+    private Piletas piletas;
     private boolean yaCompro, yaMerendo, yaAlmorzo, yaSubioFaro, yaHizoCarrera, yaHizoSnorkel, yaNadoDelfines;
 
     Random rand = new Random();
     private static final String RESET = "\u001B[0m";
     public static final String VERDE = "\u001B[32m";
-    public static final String AMARILLO = "\u001B[33m";
-    public static final String AZUL = "\u001B[34m";
     public static final String MORADO = "\u001B[35m";
     public static final String CIAN = "\u001B[36m";
     public static final String BLANCO = "\u001B[37m";
 
+    public static final String AZUL = "\u001B[34m";
 
-    public Persona(String nombre, Entrada entr, Reloj rel, Colectivo[] coles, Shop shop, Restaurante[] restos, FaroMirador faro, lagunaSnorkel snorkel, standPertenencias standP, TrenInterno tren, Carrera carrera, standBicis standB) {
+
+    public Persona(String nombre, Entrada entr, Reloj rel, Colectivo[] coles, Shop shop, Restaurante[] restos, FaroMirador faro, lagunaSnorkel snorkel, standPertenencias standP, TrenInterno tren, Carrera carrera, standBicis standB, Piletas piletas) {
         this.nombre = nombre;
         this.reloj = rel;
         this.colectivos = coles;
@@ -38,6 +39,7 @@ public class Persona implements Runnable {
         this.standDeBicis = standB;
         this.trenInterno = tren;
         this.carreraGomones = carrera;
+        this.piletas = piletas;
 
         //variable de control de que actividad ya hizo, para evitar repetir
         yaCompro = false;
@@ -66,6 +68,10 @@ public class Persona implements Runnable {
 
             boolean seguir = entrar(); //La persona entra al parque pasando por los molinetes y recibiendo su pulsera
 
+            nadarDelfines();
+
+            /*
+
             while (reloj.dentroHorario() && seguir) { //Mientras este dentro del horario y quiera seguir en el parque
 
 
@@ -77,7 +83,10 @@ public class Persona implements Runnable {
                     seguir = !(rand.nextInt(4) == 0); // 1/4 de probabilidad de que la persona se vaya
                 }
 
+
             }
+            */
+
 
 
         }
@@ -90,8 +99,6 @@ public class Persona implements Runnable {
 
 
             switch (rand.nextInt(6)) { //Elige una actividad al azar, nunca repite la misma actividad excepto restaurante
-
-                //CARRERA
 
                 //CARRERA
                 case 0:
@@ -319,8 +326,11 @@ public class Persona implements Runnable {
     }
 
     private void nadarDelfines() {
-
-
+        System.out.println(AZUL + "Va a nadar con los delfines" + RESET);
+        piletas.entrarActividad();
+        System.out.println(AZUL +  nombre + " esta nadando con los delfines." + RESET);
+        piletas.salirActividad();
+        System.out.println(AZUL + nombre + " termino de nadar con los delfines." + RESET);
         yaNadoDelfines = true;
     }
 }
