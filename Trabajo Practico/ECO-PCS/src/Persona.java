@@ -17,7 +17,6 @@ public class Persona implements Runnable {
 
     Random rand = new Random();
     private static final String RESET = "\u001B[0m";
-    public static final String ROJO = "\u001B[31m";
     public static final String VERDE = "\u001B[32m";
     public static final String AMARILLO = "\u001B[33m";
     public static final String AZUL = "\u001B[34m";
@@ -67,10 +66,6 @@ public class Persona implements Runnable {
 
             boolean seguir = entrar(); //La persona entra al parque pasando por los molinetes y recibiendo su pulsera
 
-
-
-
-
             while (reloj.dentroHorario() && seguir) { //Mientras este dentro del horario y quiera seguir en el parque
 
 
@@ -84,69 +79,83 @@ public class Persona implements Runnable {
 
             }
 
+
         }
 
     }
 
     private void elegirActividad(){
-        switch (rand.nextInt(6)) { //Elige una actividad al azar, nunca repite la misma actividad excepto restaurante
+        boolean eligio = false;
+        while(!eligio) {
 
-            //CARRERA
+
+            switch (rand.nextInt(6)) { //Elige una actividad al azar, nunca repite la misma actividad excepto restaurante
 
                 //CARRERA
-            case 0:
-                if (!yaHizoCarrera) {
-                    irCarrera();
-                }
-                break;
 
-            //RESTAURANTE
-            case 1:
-                if (!yaAlmorzo && !yaMerendo) { //Si no almorzó ni merendó elije uno
-                    if (rand.nextBoolean()) {
-                        almorzar();
-                    } else {
-                        merendar();
+                //CARRERA
+                case 0:
+                    if (!yaHizoCarrera) {
+                        eligio = true;
+                        irCarrera();
                     }
-                } else if (yaAlmorzo && !yaMerendo) { //Si ya almorzó merienda
-                    merendar();
-                } else if (!yaAlmorzo && yaMerendo) { //Si ya merendó almuerza
-                    almorzar();
-                }
-                break;
+                    break;
 
-            //SHOP
-            case 2:
-                if (!yaCompro) {
-                    shop();
-                }
-                break;
+                //RESTAURANTE
+                case 1:
+                    if (!yaAlmorzo && !yaMerendo) { //Si no almorzó ni merendó elije uno
+                        eligio = true;
+                        if (rand.nextBoolean()) {
+                            restaurante("almorzando");
+                        } else {
+                            restaurante("merendando");
+                        }
+                    } else if (yaAlmorzo && !yaMerendo) { //Si ya almorzó merienda
+                        eligio = true;
+                        restaurante("merendando");
+                    } else if (!yaAlmorzo && yaMerendo) { //Si ya merendó almuerza
+                        eligio = true;
+                        restaurante("almorzando");
+                    }
+                    break;
 
-            //FARO
-            case 3:
-                if (!yaSubioFaro) {
-                    irAlFaro();
-                }
-                break;
+                //SHOP
+                case 2:
+                    if (!yaCompro) {
+                        eligio = true;
+                        shop();
+                    }
+                    break;
 
-            //DELFINES
-            case 4:
-                if (!yaNadoDelfines) {
-                    nadarDelfines();
-                }
-                break;
+                //FARO
+                case 3:
+                    if (!yaSubioFaro) {
+                        eligio = true;
+                        irAlFaro();
+                    }
+                    break;
 
-            //SNORKEL
-            case 5:
-                if(!yaHizoSnorkel){
-                    hacerSnorkel();
-                }
-                break;
-            default:
-                System.out.println("Error en la elección de actividad");
-                break;
+                //DELFINES
+                case 4:
+                    if (!yaNadoDelfines) {
+                        eligio = true;
+                        nadarDelfines();
+                    }
+                    break;
+
+                //SNORKEL
+                case 5:
+                    if (!yaHizoSnorkel) {
+                        eligio = true;
+                        hacerSnorkel();
+                    }
+                    break;
+                default:
+                    System.out.println("Error en la elección de actividad");
+                    break;
 
 
+            }
         }
     }
 
@@ -195,28 +204,13 @@ public class Persona implements Runnable {
         }
     }
 
-    private void almorzar() {
-        //La persona almuerza en el restaurante
-        Random rand = new Random();
-        Restaurante restaurante = restaurantes[rand.nextInt(restaurantes.length)];
-        restaurante.entrar();
-        System.out.println(nombre + " esta almorzando en el restaurante.");
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-            System.out.println("Error en la espera del almuerzo");
-        }
-        restaurante.irse();
-        System.out.println(nombre + " se fue del restaurante.");
-        yaAlmorzo = true;
-    }
 
-    private void merendar() {
+    private void restaurante(String mensaje) {
         //La persona merienda en el restaurante
         Random rand = new Random();
         Restaurante restaurante = restaurantes[rand.nextInt(restaurantes.length)];
         restaurante.entrar();
-        System.out.println(nombre + " esta merendando en el restaurante.");
+        System.out.println(nombre + " esta "+ mensaje + "  en el restaurante.");
         try {
             Thread.sleep(5000);
         } catch (InterruptedException e) {
@@ -230,18 +224,16 @@ public class Persona implements Runnable {
     private void irAlFaro() {
         //La persona sube al faro y baja por los toboganes
 
-        boolean subio = faro.subir(); //devuelve si pudo subir al faro
-        if (subio) { //Si pudo subir al faro sigue
+        int turno = faro.subir(); //devuelve -1 si no pudo subir al faro
+        if (turno > -1) { //Si pudo subir al faro sigue
             System.out.println(nombre + " esta subiendo al faro.");
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
                 System.out.println("Error en la espera de la subida al faro");
             }
-            faro.llegarCima();
-            System.out.println(nombre + " llego al mirador.");
-            System.out.println(nombre + " hace fila para los toboganes.");
-            int tobogan = faro.esperarTobogan();
+            System.out.println(nombre + " llego a la cima. \n" + nombre  +" hace fila para los toboganes.");
+            int tobogan = faro.esperarTobogan(turno);
             System.out.println(nombre + " esta bajando en el tobogan n°" + tobogan + ".");
             try {
                 Thread.sleep(rand.nextInt(500, 1000));
@@ -284,13 +276,19 @@ public class Persona implements Runnable {
             int llave = standDePertenencias.dejarSusPertenencias(pertenencias);
             System.out.println(nombre + " dejo sus cosas y tomo la llave n°" + llave + ".");
 
+            int j = carreraGomones.subirseGomon(rand.nextInt(3) == 0);
+            System.out.println(nombre + " se subió al gomon " + j);
+            carreraGomones.correrCarrera(j);
+
 
             String recuperado = standDePertenencias.recogerSusPertenencias(llave);
             if(pertenencias.equals(recuperado)) {
                 System.out.println(nombre + " recogio sus pertenencias: " + pertenencias);
             }else{
-                System.out.println("Hubo un error y "+ nombre + " no pudo recuperar sus pertenencias.");
+                System.out.println
+                        ("Hubo un error y "+ nombre + " no pudo recuperar sus pertenencias.");
             }
+            yaHizoCarrera = true;
         }
 
     }

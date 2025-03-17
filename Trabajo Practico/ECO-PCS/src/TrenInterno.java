@@ -8,7 +8,7 @@ public class TrenInterno {
     private Condition esperandoLlegada = lockTren.newCondition();
 
     private int capacidadActual, capacidadMaxima;
-    private boolean llego = false, bajaronTodos = false;
+    private boolean llego = false, bajaronTodos = false, salio = false;
 
     private Reloj reloj;
 
@@ -21,13 +21,7 @@ public class TrenInterno {
     public void salir(){
         // Metodo de TREN para salir
         lockTren.lock();
-        while(capacidadActual < capacidadMaxima){ //Espera a que se llene el tren
-            try {
-                esperandoGente.await();
-            } catch (InterruptedException e) {
-                System.out.println("Error en la espera de gente del tren");
-            }
-        }
+        salio = true; //Sale del origen
         lockTren.unlock();
     }
 
@@ -48,6 +42,7 @@ public class TrenInterno {
 
         bajaronTodos = false; //Resetea la variable
         llego = false; //Resetea la variable
+        salio = false;
 
         lockTren.unlock();
     }
@@ -56,13 +51,15 @@ public class TrenInterno {
         // Metodo de PERSONA para subirse al tren
         boolean entro = false;
         lockTren.lock();
-        while(reloj.dentroHorario() && capacidadActual >= capacidadMaxima){ //Espera a que haya lugar
+        while(reloj.dentroHorario() && !salio &&capacidadActual >= capacidadMaxima){ //Espera a que haya lugar
             try {
                 esperandoTren.await();
             } catch (InterruptedException e) {
                 System.out.println("Error en la espera de subirse al tren");
             }
         }
+
+
         if(reloj.dentroHorario()){
             entro = true;
             capacidadActual++; //Se sube al tren
@@ -85,6 +82,7 @@ public class TrenInterno {
                 System.out.println("Error en la espera de bajarse del tren");
             }
         }
+
 
         capacidadActual--; //Se baja del tren
 

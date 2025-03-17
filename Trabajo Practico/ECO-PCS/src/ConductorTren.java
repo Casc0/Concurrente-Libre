@@ -19,7 +19,7 @@ public class ConductorTren implements Runnable {
             reloj.viajarQuinceMinutos(); //espera 15 minutos para que llegue a destino
             System.out.println("El tren llego");
             suTren.llegar();
-            System.out.println("El tren esta volviendo");
+            //System.out.println("El tren esta volviendo");
             reloj.viajarQuinceMinutos(); //espera 15 minutos para que vuevla al origen
             System.out.println("El tren volvio");
 

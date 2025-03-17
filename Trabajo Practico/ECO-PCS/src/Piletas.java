@@ -4,6 +4,7 @@ import java.util.concurrent.CyclicBarrier;
 public class Piletas {
 
     private CyclicBarrier arranque;
+    private Reloj reloj;
 
 
 
